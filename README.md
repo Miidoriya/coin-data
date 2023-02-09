@@ -1,3 +1,3 @@
 # coin-data (coin data)
-Implementation:
-- function to return SYMBOL, CURRENT_PRICE, ALL_TIME_HIGH, ALL_TIME_LOW for a cryptocurrency # coin-data
+Example Usage (Currently - Created using Terminalizer):
+![](https://github.com/Miidoriya/coin-data/blob/main/usage.gif)

@@ -6,11 +6,11 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix = "0.13.0"
 actix-web = "4.3.0"
 chrono = "0.4.23"
 coingecko = "1.0.1"
 futures = "0.3.26"
+httpmock = "0.6.7"
 rayon = "1.6.1"
 reqwest = "0.11.14"
 serde = "1.0.152"

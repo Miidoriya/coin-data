@@ -41,14 +41,15 @@ async fn get_coin_data(url: &str, name: &str, interval: &str) -> Result<CoinData
         "{}/assets/{}/history?interval={}&{}",
         url, name, interval, START_AND_END
     );
-    println!("url: {}", url);
-    let resp = reqwest::get(&url).await?.json::<CoinData>().await?;
-    println!("resp");
+    let resp = reqwest::get(&url)
+        .await?
+        .json::<CoinData>()
+        .await?;
     Ok(resp)
 }
 
 async fn get_coins(url: &str) -> Result<CryptoList, reqwest::Error> {
-    let url = format!("{}/assets", url).to_string();
+    let url = format!("{}/assets",url).to_string();
     let resp = reqwest::get(&url).await?.json::<CryptoList>().await?;
     Ok(resp)
 }
@@ -174,6 +175,10 @@ mod tests {
                 );
         });
         let coin_list = get_coins(&mock_server.url("/v2")).await;
+        match &coin_list {
+            Ok(_) => {}
+            Err(e) => println!("Error: {}", e),
+        }
         assert!(coin_list.is_ok());
         let coin_list = coin_list.unwrap();
         assert_eq!(coin_list.data.len(), 2);
@@ -190,29 +195,33 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_coin_data() {
-        let url_path = format!("/v2/assets/bitcoin/history?interval=d1&{}", START_AND_END);
         let mock_server = MockServer::start();
         let mock = mock_server.mock(|when, then| {
-            when.method(GET).path(&url_path);
+            when.method(GET).path_contains("/v2/assets/bitcoin/history");
             then.status(200)
                 .header("content-type", "application/json")
                 .body(
                     r#"{
                 "data": [
                     {
-                        "priceUsd": "13.8"
                         "time": 1356998400000,
+                        "priceUsd": "13.8"
                     },
                     {
-                        "priceUsd": "13.98"
                         "time": 1357084800000,
+                        "priceUsd": "13.98"
                     }
                 ]
             }"#,
                 );
         });
-        println!("{}", mock_server.url(&url_path));
-        println!("{}", mock_server.url("/v2"));
+        println!(
+            "{}",
+            mock_server.url(format!(
+                "/v2/assets/bitcoin/history?interval=d1&{}",
+                START_AND_END
+            ))
+        );
         let coin_data = get_coin_data(&mock_server.url("/v2"), "bitcoin", "d1").await;
         assert!(coin_data.is_ok());
         let coin_data = coin_data.unwrap();
